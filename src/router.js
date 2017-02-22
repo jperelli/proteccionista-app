@@ -21,7 +21,13 @@ export default new VueRouter({
    */
 
   routes: [
-    { path: '/', component: load('Index') }, // Default
+    {
+      path: '/',
+      component: load('Index'),
+      children: [
+        { path: '/perfil/', component: load('Perfil') }
+      ]
+    },
     { path: '*', component: load('Error404') } // Not found
   ]
 })
