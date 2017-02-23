@@ -26,14 +26,14 @@
                 Configurar
               </div>
             </router-link>
-            <!--div
+            <div
               class="item item-link item-delimiter"
-              @click="doSomething(), $refs.popover.close()"
+              @click="logOut(), $refs.popover.close()"
             >
               <div class="item-content">
                 Logout
               </div>
-            </div-->
+            </div>
           </div>
         </q-popover>
 
@@ -63,7 +63,25 @@ function loginStage2 (that, fbAccessToken) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.jwt
     axios.get('/profile/').then(function (response) {
       that.user = response.data
-      Loading.hide()
+      window.FB.api(
+        '/',
+        {
+          ids: that.user.fb_groups.join(','),
+          fields: 'id,name,picture{url}'
+        },
+        (response) => {
+          if (!response || response.error) {
+            alert('Error occured')
+          }
+          else {
+            that.user_fb_groups_parsed = []
+            for (var key in response) {
+              that.user_fb_groups_parsed.push(response[key])
+            }
+          }
+          Loading.hide()
+        }
+      )
     })
     .catch(function (error) {
       Dialog.create({
@@ -83,7 +101,8 @@ function loginStage2 (that, fbAccessToken) {
 }
 
 store.state.index = {
-  user: false
+  user: false,
+  user_fb_groups_parsed: []
 }
 
 export default {
@@ -91,12 +110,10 @@ export default {
     return store.state.index
   },
   created: function () {
-    console.log(this)
     var that = this
     window.fbAsyncInit = function () {
       window.FB.init({
         appId: '726350657534668',
-        xfbml: true,
         version: 'v2.8'
       })
 
@@ -118,11 +135,10 @@ export default {
   },
   methods: {
     FBLogin () {
-      var that = this
       Loading.show({ delay: 0, message: 'Esperando Log in' })
-      window.FB.login(function (response) {
+      window.FB.login((response) => {
         if (response.status === 'connected') {
-          loginStage2(that, response.authResponse.accessToken)
+          loginStage2(this, response.authResponse.accessToken)
         }
         else {
           Dialog.create({
@@ -131,7 +147,13 @@ export default {
           })
           Loading.hide()
         }
-      }, {scope: 'public_profile,pages_show_list,email'})
+      }, {scope: 'public_profile,user_managed_groups,email'})
+    },
+    logOut () {
+      window.FB.logout((response) => {
+        delete axios.defaults.headers.common['Authorization']
+        this.user = false
+      })
     }
   }
 }
