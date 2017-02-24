@@ -11,6 +11,7 @@ import Quasar from 'quasar'
 import router from './router'
 import config from './config'
 import axios from 'axios'
+import store from './store'
 
 Vue.use(Quasar) // Install Quasar Framework
 
@@ -19,6 +20,7 @@ Quasar.start(() => {
   new Vue({
     el: '#q-app',
     router,
+    store,
     render: h => h(require('./App')),
     created: () => {
       axios.defaults.baseURL = config.api

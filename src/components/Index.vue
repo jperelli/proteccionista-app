@@ -46,85 +46,23 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { Dialog, Loading } from 'quasar'
-import axios from 'axios'
-import store from '../store'
-
-function loginStage2 (that, fbAccessToken) {
-  axios.get(
-    '/profile/jwt',
-    {
-      headers: {
-        'Authorization': 'FB ' + fbAccessToken
-      }
-    }
-  )
-  .then(function (response) {
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.jwt
-    axios.get('/profile/').then(function (response) {
-      that.user = response.data
-      window.FB.api(
-        '/',
-        {
-          ids: that.user.fb_groups.join(','),
-          fields: 'id,name,picture{url}'
-        },
-        (response) => {
-          if (!response || response.error) {
-            alert('Error occured')
-          }
-          else {
-            that.user_fb_groups_parsed = []
-            for (var key in response) {
-              that.user_fb_groups_parsed.push(response[key])
-            }
-          }
-          Loading.hide()
-        }
-      )
-    })
-    .catch(function (error) {
-      Dialog.create({
-        title: 'Error',
-        message: 'Could not retrieve profile. (3)<hr>' + error
-      })
-      Loading.hide()
-    })
-  })
-  .catch(function (error) {
-    Dialog.create({
-      title: 'Error',
-      message: 'Could not connect via facebook. (2)<hr>' + error
-    })
-    Loading.hide()
-  })
-}
-
-store.state.index = {
-  user: false,
-  user_fb_groups_parsed: []
-}
 
 export default {
-  data () {
-    return store.state.index
+  computed: {
+    ...mapGetters([
+      'user',
+      'fb_groups'
+    ])
   },
   created: function () {
-    var that = this
     window.fbAsyncInit = function () {
       window.FB.init({
         appId: '726350657534668',
         version: 'v2.8'
       })
-
-      window.FB.getLoginStatus(function (response) {
-        if (response.status === 'connected') {
-          Loading.show({ delay: 0, message: 'Esperando Log in' })
-          loginStage2(that, response.authResponse.accessToken)
-        }
-      })
     };
-
     (function (d, s, id) {
       var js, fjs = d.getElementsByTagName(s)[0]
       if (d.getElementById(id)) { return }
@@ -136,24 +74,27 @@ export default {
   methods: {
     FBLogin () {
       Loading.show({ delay: 0, message: 'Esperando Log in' })
-      window.FB.login((response) => {
-        if (response.status === 'connected') {
-          loginStage2(this, response.authResponse.accessToken)
-        }
-        else {
+      this.$store.dispatch('fblogin')
+        .then(Loading.hide)
+        .catch((error) => {
           Dialog.create({
             title: 'Error',
-            message: 'Could not connect via facebook. (1)<hr>' + response.status
+            message: 'Could not login <hr>' + error
           })
           Loading.hide()
-        }
-      }, {scope: 'public_profile,user_managed_groups,email'})
+        })
     },
     logOut () {
-      window.FB.logout((response) => {
-        delete axios.defaults.headers.common['Authorization']
-        this.user = false
-      })
+      Loading.show({ delay: 0, message: 'Cerrando sesion' })
+      this.$store.dispatch('logout')
+        .then(Loading.hide)
+        .catch((error) => {
+          Dialog.create({
+            title: 'Error',
+            message: 'Could not logout <hr>' + error
+          })
+          Loading.hide()
+        })
     }
   }
 }
