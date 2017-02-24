@@ -25,7 +25,8 @@ export default new VueRouter({
       path: '/',
       component: load('Index'),
       children: [
-        { path: '/perfil/', component: load('Perfil') }
+        { path: '/perfil/', component: load('Perfil') },
+        { path: '/catalogar/', component: load('Catalogar') }
       ]
     },
     { path: '*', component: load('Error404') } // Not found

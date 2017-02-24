@@ -1,11 +1,9 @@
 <template>
   <q-layout>
     <div slot="header" class="toolbar">
-      <q-toolbar-title :padding="1">
-        <router-link to="/">
-          Proteccionista
-        </router-link>
-      </q-toolbar-title>
+      <button class="hide-on-drawer-visible" @click="$refs.leftDrawer.open()">
+        <i>menu</i>
+      </button>
       <button v-if="!user" @click="FBLogin()">
         Login
         <i>account_circle</i>
@@ -18,18 +16,20 @@
           <div class="list highlight">
             <router-link
               tag="div"
-              class="item item-link item-delimiter"
+              class="item item-link"
               to="/perfil/"
               v-on:click.native="$refs.popover.close()"
             >
+              <i class="item-primary">settings</i>
               <div class="item-content">
                 Configurar
               </div>
             </router-link>
             <div
-              class="item item-link item-delimiter"
+              class="item item-link"
               @click="logOut(), $refs.popover.close()"
             >
+              <i class="item-primary">power_settings_new</i>
               <div class="item-content">
                 Logout
               </div>
@@ -39,6 +39,35 @@
 
       </button>
     </div>
+
+    <q-drawer ref="leftDrawer">
+      <div class="list no-border platform-delimiter">
+        <div class="list-label">Acciones</div>
+        <q-drawer-link icon="view_quilt" to="/catalogar/" exact>
+          Catalogar
+        </q-drawer-link>
+        <hr>
+        <div class="list-label">Listados</div>
+        <q-drawer-link icon="view_quilt" to="/animales/" exact>
+          Animales
+        </q-drawer-link>
+        <q-drawer-link icon="view_quilt" to="/casos/" exact>
+          Casos
+        </q-drawer-link>
+        <hr>
+        <div class="list-label">Usuario</div>
+        <q-drawer-link icon="settings" to="/perfil/">
+          Configurar
+        </q-drawer-link>
+        <div class="item item-link drawer-closer" @click="logOut()">
+          <i class="item-primary">power_settings_new</i>
+          <div class="item-content">
+            Logout
+          </div>
+        </div>
+      </div>
+      </div>
+    </q-drawer>
 
     <router-view class="layout-view"></router-view>
 
