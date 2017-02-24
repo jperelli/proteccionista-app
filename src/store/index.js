@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import createLogger from 'vuex/src/plugins/logger'
 
 import perfil from './modules/perfil'
 
@@ -12,7 +11,6 @@ export default new Vuex.Store({
   modules: {
     perfil
   },
-  strict: debug,
-  plugins: debug ? [createLogger()] : []
+  strict: debug
 })
 
