@@ -42,27 +42,33 @@
 
     <q-drawer ref="leftDrawer">
       <div class="list no-border platform-delimiter">
-        <div class="list-label">Acciones</div>
-        <q-drawer-link icon="view_quilt" to="/catalogar/" exact>
+        <div v-if="user" class="list-label">Acciones</div>
+        <q-drawer-link v-if="user" icon="view_quilt" to="/catalogar/" exact>
           Catalogar
         </q-drawer-link>
-        <hr>
+        <hr v-if="user">
         <div class="list-label">Listados</div>
-        <q-drawer-link icon="view_quilt" to="/animales/" exact>
+        <q-drawer-link icon="pets" to="/animales/" exact>
           Animales
         </q-drawer-link>
-        <q-drawer-link icon="view_quilt" to="/casos/" exact>
+        <q-drawer-link icon="warning" to="/casos/" exact>
           Casos
         </q-drawer-link>
         <hr>
         <div class="list-label">Usuario</div>
-        <q-drawer-link icon="settings" to="/perfil/">
+        <q-drawer-link v-if="user" icon="settings" to="/perfil/">
           Configurar
         </q-drawer-link>
-        <div class="item item-link drawer-closer" @click="logOut()">
+        <div v-if="user" class="item item-link drawer-closer" @click="logOut()">
           <i class="item-primary">power_settings_new</i>
           <div class="item-content">
             Logout
+          </div>
+        </div>
+        <div v-if="!user" class="item item-link drawer-closer" @click="FBLogin()">
+          <i class="item-primary">account_circle</i>
+          <div class="item-content">
+            Login
           </div>
         </div>
       </div>
