@@ -13,7 +13,8 @@
       <div>
         <div v-for="p in posts" v-if="!fbcase(p)" class="card">
           <div class="card-title">
-            {{getType(p)}} <span>{{fbcase(p)}}</span>
+            {{getType(p)}}
+            <div style="color:gray;font-size:0.7em">{{p.created_time | date}}</div>
             <a class="pull-right" :href="p.permalink_url" target="_blank"><i>open_in_new</i></a>
             <a class="pull-right" :href="'https://developers.facebook.com/tools/explorer/?method=GET&path='+p.id+'%3Ffields%3Dattachments{description,media,url,title,type,subattachments,description_tags},caption,child_attachments,coordinates,created_time,description,expanded_height,full_picture,height,icon,id,link,message,message_tags,multi_share_end_card,multi_share_optimized,name,object_id,parent_id,picture,place,privacy,properties,shares,status_type,story,story_tags,timeline_visibility,type,updated_time,via,width,permalink_url,sharedposts'" target="_blank"><i>bug_report</i></a>
           </div>
@@ -60,6 +61,14 @@
                   <q-checkbox v-model="p.form.issues.Tratamiento"></q-checkbox>
                   Tratamiento
                 </label>
+
+                <div>
+                  <q-datetime
+                    v-model="p.form.date"
+                    type="date"
+                    label="Fecha"
+                  ></q-datetime>
+                </div>
 
                 <div class="floating-label">
                   <input v-model="p.form.title" required class="full-width">
@@ -289,7 +298,7 @@ export default {
       window.FB.api(
         '/' + n + '/feed',
         {
-          fields: 'attachments{description,media,type,subattachments,url,id},description,picture,place,coordinates,message,type,permalink_url,parent_id,from',
+          fields: 'attachments{description,media,type,subattachments,url,id},description,picture,message,type,permalink_url,from,created_time,place{location{latitude,longitude}}',
           since: since,
           until: until
           // limit: 100
@@ -302,6 +311,7 @@ export default {
             this.posts = response.data.map(p => Object.assign({}, p, {
               form: {
                 fbcase: {id_facebook: p.id},
+                date: p.created_time,
                 title: '',
                 description: this.getDescriptions(p).join('\n'),
                 images: this.getPictures(p),

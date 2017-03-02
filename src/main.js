@@ -8,12 +8,14 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 
 import Vue from 'vue'
 import Quasar from 'quasar'
+import vueFilter from 'vue-filter'
 import router from './router'
 import config from './config'
 import axios from 'axios'
 import store from './store'
 
 Vue.use(Quasar) // Install Quasar Framework
+Vue.use(vueFilter)
 
 Quasar.start(() => {
   /* eslint-disable no-new */
