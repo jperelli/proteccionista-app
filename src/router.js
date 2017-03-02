@@ -25,6 +25,9 @@ export default new VueRouter({
       path: '/',
       component: load('Index'),
       children: [
+        { path: '/', component: load('Index-content') },
+        { path: '/animales/', component: load('Animales') },
+        { path: '/casos/', component: load('Casos') },
         { path: '/perfil/', component: load('Perfil') },
         { path: '/catalogar/', component: load('Catalogar') }
       ]
