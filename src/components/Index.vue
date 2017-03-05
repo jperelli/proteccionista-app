@@ -54,6 +54,9 @@
         <q-drawer-link icon="warning" to="/casos/" exact>
           Casos
         </q-drawer-link>
+        <q-drawer-link icon="map" to="/mapa/">
+          Mapa
+        </q-drawer-link>
         <hr>
         <div class="list-label">Usuario</div>
         <q-drawer-link v-if="user" icon="settings" to="/perfil/">
@@ -134,3 +137,12 @@ export default {
   }
 }
 </script>
+
+<style>
+.drawer.left-side {
+  z-index: 11;
+}
+.layout-view {
+  z-index: 0;
+}
+</style>

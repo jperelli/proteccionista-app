@@ -78,6 +78,12 @@
                   <textarea v-model="p.form.description" required class="full-width" style="min-height:200px"></textarea>
                   <label>Descripción</label>
                 </div>
+                <div>{{p.form.location}}</div>
+                <v-map :zoom=13 :center="initialLocation">
+                  <v-icondefault :image-path="'/statics/leafletImages/'"></v-icondefault>
+                  <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+                  <v-marker :lat-lng="initialLocation" :draggable="true" v-on:l-dragend="dragend($event, p)"></v-marker>
+                </v-map>
                 <div>
                   Datos del animal
                   <div class="floating-label">
@@ -145,13 +151,21 @@
 <script>
 import axios from 'axios'
 
+function leaflet2geojsonPoint (p) {
+  return {
+    type: 'Point',
+    coordinates: [p.lat, p.lng]
+  }
+}
+
 export default {
   data () {
     return {
       selectedGroup: null,
       posts: [],
       date: new Date().toISOString(),
-      fbcases: []
+      fbcases: [],
+      initialLocation: window.L.latLng(-34.9205, -57.953646)
     }
   },
   computed: {
@@ -160,6 +174,9 @@ export default {
     }
   },
   methods: {
+    dragend: function (event, p) {
+      p.form.location = leaflet2geojsonPoint(event.target._latlng)
+    },
     searchType: function (terms, done) {
       axios.get('/animals/searchTerms?type=' + terms)
         .then((response) => {
@@ -314,6 +331,7 @@ export default {
                 date: p.created_time,
                 title: '',
                 description: this.getDescriptions(p).join('\n'),
+                location: leaflet2geojsonPoint(this.initialLocation),
                 images: this.getPictures(p),
                 issues: {
                   'Encontrado': false,
@@ -353,6 +371,11 @@ export default {
 </script>
 
 <style>
+@import "~leaflet/dist/leaflet.css";
+.map-container {
+  height: 250px
+}
+
 .card-content .card-img {
   background-size: contain;
   background-position: center;
