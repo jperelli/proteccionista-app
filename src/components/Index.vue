@@ -42,11 +42,11 @@
 
     <q-drawer ref="leftDrawer">
       <div class="list no-border platform-delimiter">
-        <div v-if="user" class="list-label">Acciones</div>
-        <q-drawer-link v-if="user" icon="view_quilt" to="/catalogar/" exact>
+        <div v-if="user && user.capabilities.indexOf('admin') !== -1" class="list-label">Acciones</div>
+        <q-drawer-link v-if="user && user.capabilities.indexOf('admin') !== -1" icon="view_quilt" to="/catalogar/" exact>
           Catalogar
         </q-drawer-link>
-        <hr v-if="user">
+        <hr v-if="user && user.capabilities.indexOf('admin') !== -1">
         <div class="list-label">Listados</div>
         <q-drawer-link icon="pets" to="/animales/" exact>
           Animales
