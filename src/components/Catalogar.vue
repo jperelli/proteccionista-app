@@ -150,6 +150,7 @@
 
 <script>
 import axios from 'axios'
+import { Dialog, Loading } from 'quasar'
 
 function leaflet2geojsonPoint (p) {
   return {
@@ -220,36 +221,59 @@ export default {
       this.$set(p, 'create_case', !p.create_case)
     },
     action_merge: function (p) {
-      console.log('merge ', p)
+      Dialog.create({
+        title: 'No implementado',
+        message: 'todavia no esta implementado'
+      })
     },
     action_delete: function (p) {
+      Loading.show({ delay: 0, message: 'Eliminando caso' })
       axios.post('/fbcases', { id_facebook: p.id })
         .then((response) => {
           axios.get('/fbcases?id_group=' + this.selectedGroup)
             .then((response) => {
               this.fbcases = response.data
+              Loading.hide()
             })
             .catch((e) => {
-              console.log('[1] ' + e)
+              Dialog.create({
+                title: 'Error',
+                message: 'No pude eliminar el caso [2]<hr>' + e
+              })
+              Loading.hide()
             })
         })
         .catch((e) => {
-          console.log('[1] ' + e)
+          Dialog.create({
+            title: 'Error',
+            message: 'No pude eliminar el caso [1]<hr>' + e
+          })
+          Loading.hide()
         })
     },
     action_new_case: function (p) {
+      Loading.show({ delay: 0, message: 'Creando caso' })
       axios.post('/cases', p.form)
         .then((response) => {
           axios.get('/fbcases?id_group=' + this.selectedGroup)
             .then((response) => {
               this.fbcases = response.data
+              Loading.hide()
             })
             .catch((e) => {
-              console.log('[1] ' + e)
+              Dialog.create({
+                title: 'Error',
+                message: 'No pude crear el caso [2]<hr>' + e
+              })
+              Loading.hide()
             })
         })
         .catch((e) => {
-          console.log('[1] ' + e)
+          Dialog.create({
+            title: 'Error',
+            message: 'No pude crear el caso [1]<hr>' + e
+          })
+          Loading.hide()
         })
     },
     getPictures: function (p) {

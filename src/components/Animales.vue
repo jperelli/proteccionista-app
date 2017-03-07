@@ -22,20 +22,28 @@
 
 <script>
 import axios from 'axios'
+import { Dialog, Loading } from 'quasar'
 
 export default {
   data () {
     return {
-      animals: []
+      animals: [],
+      page: 1
     }
   },
   created: function () {
-    axios.get('/animals')
+    Loading.show({ delay: 0, message: 'Cargando Animales' })
+    axios.get('/animals?page=' + this.page)
       .then((response) => {
         this.animals = response.data
+        Loading.hide()
       })
       .catch((e) => {
-        console.log('[1] ' + e)
+        Dialog.create({
+          title: 'Error',
+          message: 'Could not login <hr>' + e
+        })
+        Loading.hide()
       })
   }
 }

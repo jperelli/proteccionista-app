@@ -15,6 +15,7 @@
 <script>
 import axios from 'axios'
 import MarkerCluster from './MarkerCluster'
+import { Dialog, Loading } from 'quasar'
 
 export default {
   components: {
@@ -39,12 +40,18 @@ export default {
     }
   },
   created: function () {
-    axios.get('/cases')
+    Loading.show({ delay: 0, message: 'Cargando Casos' })
+    axios.get('/cases?page=all')
       .then((response) => {
         this.cases = response.data
+        Loading.hide()
       })
       .catch((e) => {
-        console.log('[1] ' + e)
+        Loading.hide()
+        Dialog.create({
+          title: 'Error',
+          message: 'No pude recuperar los casos <hr>' + e
+        })
       })
   }
 }
