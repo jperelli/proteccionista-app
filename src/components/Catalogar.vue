@@ -85,11 +85,10 @@
                     <textarea v-model="p.form.description" required class="full-width" style="min-height:200px"></textarea>
                     <label>Descripción</label>
                   </div>
-                  <div>{{p.form.location}}</div>
-                  <v-map :zoom=13 :center="initialLocation">
+                  <v-map :zoom=13 :center="initialLocation" @l-click="mapClick($event, p)">
                     <v-icondefault :image-path="'/statics/leafletImages/'"></v-icondefault>
                     <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-                    <v-marker :lat-lng="initialLocation" :draggable="true" v-on:l-dragend="dragend($event, p)"></v-marker>
+                    <v-marker :lat-lng="markerLocation" :draggable="true" v-on:l-dragend="dragend($event, p)"></v-marker>
                   </v-map>
                   <div>
                     Datos del animal
@@ -174,7 +173,8 @@ export default {
       posts: [],
       date: new Date().toISOString(),
       fbcases: [],
-      initialLocation: window.L.latLng(-34.9205, -57.953646)
+      initialLocation: window.L.latLng(-34.9205, -57.953646),
+      markerLocation: window.L.latLng(-34.9205, -57.953646)
     }
   },
   computed: {
@@ -244,6 +244,10 @@ export default {
     },
     dragend: function (event, p) {
       p.form.location = leaflet2geojsonPoint(event.target._latlng)
+    },
+    mapClick: function (event, p) {
+      p.form.location = leaflet2geojsonPoint(event.latlng)
+      this.markerLocation = event.latlng
     },
     searchType: function (terms, done) {
       axios.get('/animals/searchTerms?type=' + terms)
