@@ -21,126 +21,132 @@
             <a class="pull-right" :href="'https://developers.facebook.com/tools/explorer/?method=GET&path='+p.id+'%3Ffields%3Dattachments{description,media,url,title,type,subattachments,description_tags},caption,child_attachments,coordinates,created_time,description,expanded_height,full_picture,height,icon,id,link,message,message_tags,multi_share_end_card,multi_share_optimized,name,object_id,parent_id,picture,place,privacy,properties,shares,status_type,story,story_tags,timeline_visibility,type,updated_time,via,width,permalink_url,sharedposts'" target="_blank"><i>bug_report</i></a>
           </div>
           <div class="card-content">
-            <div v-for="p in getPictures(p)" class="card-img" :style="{ 'background-image': 'url(' + p + ')' }"></div>
-            <div v-for="d in getDescriptions(p)">
-              {{d}}
-            </div>
-            <div class="card-actions">
-              <button class="positive clear small" @click="action_create(p)"><i class="on-left">done</i> Crear caso</button>
-              <button class="warning clear small" @click="action_merge(p)"><i class="on-left">merge_type</i> Fusionar casos</button>
-              <button class="negative clear small" @click="action_delete(p)"><i class="on-left">delete</i> Descartar</button>
-            </div>
-            <div v-if="p.create_case" class="card shadow-2">
-              <div class="card-title">
-                Crear caso
-              </div>
-              <div class="card-content">
-                <label>
-                  <q-checkbox v-model="p.form.issues.Encontrado"></q-checkbox>
-                  Encontrado
-                </label>
-                <label>
-                  <q-checkbox v-model="p.form.issues.Perdido"></q-checkbox>
-                  Perdido
-                </label>
-                <label>
-                  <q-checkbox v-model="p.form.issues.Traslado"></q-checkbox>
-                  Traslado
-                </label>
-                <label>
-                  <q-checkbox v-model="p.form.issues.Tránsito"></q-checkbox>
-                  Tránsito
-                </label>
-                <label>
-                  <q-checkbox v-model="p.form.issues.Adopción"></q-checkbox>
-                  Adopción
-                </label>
-                <label>
-                  <q-checkbox v-model="p.form.issues['Colaboración Económica']"></q-checkbox>
-                  Colaboración Económica
-                </label>
-                <label>
-                  <q-checkbox v-model="p.form.issues.Tratamiento"></q-checkbox>
-                  Tratamiento
-                </label>
-
-                <div>
-                  <q-datetime
-                    v-model="p.form.date"
-                    type="date"
-                    label="Fecha"
-                  ></q-datetime>
-                </div>
-
-                <div class="floating-label">
-                  <input v-model="p.form.title" required class="full-width">
-                  <label>Título</label>
-                </div>
-                <div class="floating-label">
-                  <textarea v-model="p.form.description" required class="full-width" style="min-height:200px"></textarea>
-                  <label>Descripción</label>
-                </div>
-                <div>{{p.form.location}}</div>
-                <v-map :zoom=13 :center="initialLocation">
-                  <v-icondefault :image-path="'/statics/leafletImages/'"></v-icondefault>
-                  <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-                  <v-marker :lat-lng="initialLocation" :draggable="true" v-on:l-dragend="dragend($event, p)"></v-marker>
-                </v-map>
-                <div>
-                  Datos del animal
-                  <div class="floating-label">
-                    <input v-model="p.form.animal.name" required class="full-width">
-                    <label>Nombre</label>
-                  </div>
-                  <q-autocomplete v-model="p.form.animal.type" :delay="300" @search="searchType">
-                    <div class="floating-label">
-                      <input v-model="p.form.animal.type" required class="full-width">
-                      <label>Tipo</label>
-                    </div>
-                  </q-autocomplete>
-                  <q-autocomplete v-model="p.form.animal.color" :delay="300" @search="searchColor">
-                    <div class="floating-label">
-                      <input v-model="p.form.animal.color" required class="full-width">
-                      <label>Color</label>
-                    </div>
-                  </q-autocomplete>
-                  <div class="floating-label">
-                    <input v-model="p.form.animal.owner" required class="full-width">
-                    <label>Contacto (humano)</label>
-                  </div>
-                  <q-autocomplete v-model="p.form.animal.race" :delay="300" @search="searchRace">
-                    <div class="floating-label">
-                      <input v-model="p.form.animal.race" required class="full-width">
-                      <label>Raza</label>
-                    </div>
-                  </q-autocomplete>
-                  <div>
-                    <q-select
-                      label="Tamaño"
-                      type="list"
-                      v-model="p.form.animal.size"
-                      :options="[{label:'Chico',value:'Chico'},{label:'Mediano',value:'Mediano'},{label:'Grande',value:'Grande'}]"
-                    ></q-select>
-                  </div>
-                  <div>
-                    <q-select
-                      label="Sexo"
-                      type="list"
-                      v-model="p.form.animal.sex"
-                      :options="[{label:'Hembra',value:'Hembra'},{label:'Macho',value:'Macho'}]"
-                    ></q-select>
-                  </div>
-                  <div>
-                    <q-select
-                      label="Edad"
-                      type="list"
-                      v-model="p.form.animal.age"
-                      :options="[{label:'Cachorro',value:'Cachorro'},{label:'Adulto',value:'Adulto'},{label:'Anciano',value:'Anciano'}]"
-                    ></q-select>
-                  </div>
+            <div class="row gutter">
+              <div v-bind:class="{ 'width-1of2': p.create_case, 'width-1of1': !p.create_case}">
+                <div v-for="p in getPictures(p)" class="card-img" :style="{ 'background-image': 'url(' + p + ')' }"></div>
+                <div v-for="d in getDescriptions(p)">
+                  {{d}}
                 </div>
                 <div class="card-actions">
-                  <button class="positive clear small" @click="action_new_case(p)"><i class="on-left">done</i> Guardar caso</button>
+                  <button class="positive clear small" @click="action_create(p)"><i class="on-left">done</i> Crear caso</button>
+                  <button class="warning clear small" @click="action_merge(p)"><i class="on-left">merge_type</i> Fusionar casos</button>
+                  <button class="negative clear small" @click="action_delete(p)"><i class="on-left">delete</i> Descartar</button>
+                </div>
+              </div>
+              <div v-if="p.create_case" class="card shadow-2 create-case" v-bind:class="{ 'width-1of2': p.create_case }">
+                <div class="card-title">
+                  Crear caso
+                </div>
+                <div class="card-content">
+                  <div class="row wrap justify-between">
+                    <label>
+                      <q-checkbox v-model="p.form.issues.Encontrado"></q-checkbox>
+                      Encontrado
+                    </label>
+                    <label>
+                      <q-checkbox v-model="p.form.issues.Perdido"></q-checkbox>
+                      Perdido
+                    </label>
+                    <label>
+                      <q-checkbox v-model="p.form.issues.Traslado"></q-checkbox>
+                      Traslado
+                    </label>
+                    <label>
+                      <q-checkbox v-model="p.form.issues.Tránsito"></q-checkbox>
+                      Tránsito
+                    </label>
+                    <label>
+                      <q-checkbox v-model="p.form.issues.Adopción"></q-checkbox>
+                      Adopción
+                    </label>
+                    <label>
+                      <q-checkbox v-model="p.form.issues['Colaboración Económica']"></q-checkbox>
+                      Colaboración Económica
+                    </label>
+                    <label>
+                      <q-checkbox v-model="p.form.issues.Tratamiento"></q-checkbox>
+                      Tratamiento
+                    </label>
+                  </div>
+
+                  <div>
+                    <q-datetime
+                      v-model="p.form.date"
+                      type="date"
+                      label="Fecha"
+                    ></q-datetime>
+                  </div>
+
+                  <div class="floating-label">
+                    <input v-model="p.form.title" required class="full-width">
+                    <label>Título</label>
+                  </div>
+                  <div class="floating-label">
+                    <textarea v-model="p.form.description" required class="full-width" style="min-height:200px"></textarea>
+                    <label>Descripción</label>
+                  </div>
+                  <div>{{p.form.location}}</div>
+                  <v-map :zoom=13 :center="initialLocation">
+                    <v-icondefault :image-path="'/statics/leafletImages/'"></v-icondefault>
+                    <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+                    <v-marker :lat-lng="initialLocation" :draggable="true" v-on:l-dragend="dragend($event, p)"></v-marker>
+                  </v-map>
+                  <div>
+                    Datos del animal
+                    <div class="floating-label">
+                      <input v-model="p.form.animal.name" required class="full-width">
+                      <label>Nombre</label>
+                    </div>
+                    <q-autocomplete v-model="p.form.animal.type" :delay="300" @search="searchType">
+                      <div class="floating-label">
+                        <input v-model="p.form.animal.type" required class="full-width">
+                        <label>Tipo</label>
+                      </div>
+                    </q-autocomplete>
+                    <q-autocomplete v-model="p.form.animal.color" :delay="300" @search="searchColor">
+                      <div class="floating-label">
+                        <input v-model="p.form.animal.color" required class="full-width">
+                        <label>Color</label>
+                      </div>
+                    </q-autocomplete>
+                    <div class="floating-label">
+                      <input v-model="p.form.animal.owner" required class="full-width">
+                      <label>Contacto (humano)</label>
+                    </div>
+                    <q-autocomplete v-model="p.form.animal.race" :delay="300" @search="searchRace">
+                      <div class="floating-label">
+                        <input v-model="p.form.animal.race" required class="full-width">
+                        <label>Raza</label>
+                      </div>
+                    </q-autocomplete>
+                    <div>
+                      <q-select
+                        label="Tamaño"
+                        type="list"
+                        v-model="p.form.animal.size"
+                        :options="[{label:'Chico',value:'Chico'},{label:'Mediano',value:'Mediano'},{label:'Grande',value:'Grande'}]"
+                      ></q-select>
+                    </div>
+                    <div>
+                      <q-select
+                        label="Sexo"
+                        type="list"
+                        v-model="p.form.animal.sex"
+                        :options="[{label:'Hembra',value:'Hembra'},{label:'Macho',value:'Macho'}]"
+                      ></q-select>
+                    </div>
+                    <div>
+                      <q-select
+                        label="Edad"
+                        type="list"
+                        v-model="p.form.animal.age"
+                        :options="[{label:'Cachorro',value:'Cachorro'},{label:'Adulto',value:'Adulto'},{label:'Anciano',value:'Anciano'}]"
+                      ></q-select>
+                    </div>
+                  </div>
+                  <div class="card-actions">
+                    <button class="positive clear small" @click="action_new_case(p)"><i class="on-left">done</i> Guardar caso</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -417,5 +423,16 @@ export default {
   padding: 13px 0 0 0;
   margin-top: 13px;
   border-top: 1px solid lightgray;
+}
+
+.card-content > .row {
+  position: relative;
+}
+.card-content > .row > .create-case {
+  position: absolute;
+  height: 100%;
+  width: 50%;
+  right: 0;
+  overflow-y: visible;
 }
 </style>
