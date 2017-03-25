@@ -1,53 +1,15 @@
 <template>
   <q-layout>
-    <div slot="header" class="toolbar">
-      <button class="hide-on-drawer-visible" @click="$refs.leftDrawer.open()">
-        <i>menu</i>
-      </button>
-      <button v-if="!user" @click="FBLogin()">
-        Login
-        <i>account_circle</i>
-      </button>
-      <button v-if="user">
-        {{ user.name }}
-        <i>account_circle</i>
-
-        <q-popover ref="popover">
-          <div class="list highlight">
-            <router-link
-              tag="div"
-              class="item item-link"
-              to="/perfil/"
-              v-on:click.native="$refs.popover.close()"
-            >
-              <i class="item-primary">settings</i>
-              <div class="item-content">
-                Configurar
-              </div>
-            </router-link>
-            <div
-              class="item item-link"
-              @click="logOut(), $refs.popover.close()"
-            >
-              <i class="item-primary">power_settings_new</i>
-              <div class="item-content">
-                Logout
-              </div>
-            </div>
-          </div>
-        </q-popover>
-
-      </button>
-    </div>
-
     <q-drawer ref="leftDrawer">
       <div class="list no-border platform-delimiter">
-        <div v-if="user && user.capabilities.indexOf('admin') !== -1" class="list-label">Acciones</div>
+        <q-drawer-link class="logo-container" to="/">
+          <img src="statics/portada-small.png">
+        </q-drawer-link>
+        <hr>
         <q-drawer-link v-if="user && user.capabilities.indexOf('admin') !== -1" icon="view_quilt" to="/catalogar/" exact>
           Catalogar
         </q-drawer-link>
         <hr v-if="user && user.capabilities.indexOf('admin') !== -1">
-        <div class="list-label">Listados</div>
         <q-drawer-link icon="pets" to="/animales/" exact>
           Animales
         </q-drawer-link>
@@ -58,7 +20,6 @@
           Mapa
         </q-drawer-link>
         <hr>
-        <div class="list-label">Usuario</div>
         <q-drawer-link v-if="user" icon="settings" to="/perfil/">
           Configurar
         </q-drawer-link>
@@ -144,5 +105,11 @@ export default {
 }
 .layout-view {
   z-index: 0;
+}
+.item.logo-container {
+  height: initial;
+}
+.item.logo-container > * {
+  text-align: center;
 }
 </style>
