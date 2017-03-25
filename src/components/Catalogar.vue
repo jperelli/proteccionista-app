@@ -5,10 +5,12 @@
         type="radio"
         v-model="selectedGroup"
         :options="selectOptions"
+        @input="load_posts"
       ></q-select>
       <q-datetime
         v-model="date"
         type="date"
+        @input="load_posts"
       ></q-datetime>
       <div>
         <div v-for="p in posts" v-if="!fbcase(p)" class="card">
@@ -175,6 +177,65 @@ export default {
     }
   },
   methods: {
+    load_posts: function () {
+      var since = this.date.split('T')[0]
+      var until = new Date(this.date.split('T')[0])
+      until.setDate(until.getDate() + 1)
+      until = until.toISOString().split('T')[0]
+      window.FB.api(
+        '/' + this.selectedGroup + '/feed',
+        {
+          fields: 'attachments{description,media,type,subattachments,url,id},description,picture,message,type,permalink_url,from,created_time,place{location{latitude,longitude}}',
+          since: since,
+          until: until
+          // limit: 100
+        },
+        (response) => {
+          if (!response || response.error) {
+            // alert('Error occured')
+          }
+          else {
+            this.posts = response.data.map(p => Object.assign({}, p, {
+              form: {
+                fbcase: {id_facebook: p.id},
+                date: p.created_time,
+                title: '',
+                description: this.getDescriptions(p).join('\n'),
+                location: leaflet2geojsonPoint(this.initialLocation),
+                images: this.getPictures(p),
+                issues: {
+                  'Encontrado': false,
+                  'Perdido': false,
+                  'Traslado': false,
+                  'Tránsito': false,
+                  'Adopción': false,
+                  'Colaboración Económica': false,
+                  'Tratamiento': false
+                },
+                animal: {
+                  name: '',
+                  type: '',
+                  color: '',
+                  owner: '',
+                  race: '',
+                  size: '',
+                  sex: '',
+                  age: ''
+                }
+              }
+            }))
+            // ?fields=attachments{description,media},description,picture,place,coordinates,message,type,permalink_url
+          }
+        }
+      )
+      axios.get('/fbcases?id_group=' + this.selectedGroup)
+        .then((response) => {
+          this.fbcases = response.data
+        })
+        .catch((e) => {
+          console.log('[1] ' + e)
+        })
+    },
     dragend: function (event, p) {
       p.form.location = leaflet2geojsonPoint(event.target._latlng)
     },
@@ -328,67 +389,6 @@ export default {
         ret += p.attachments.data[0].type
       }
       return ret
-    }
-  },
-  watch: {
-    selectedGroup: function (n, o) {
-      var since = this.date.split('T')[0]
-      var until = new Date(this.date.split('T')[0])
-      until.setDate(until.getDate() + 1)
-      until = until.toISOString().split('T')[0]
-      window.FB.api(
-        '/' + n + '/feed',
-        {
-          fields: 'attachments{description,media,type,subattachments,url,id},description,picture,message,type,permalink_url,from,created_time,place{location{latitude,longitude}}',
-          since: since,
-          until: until
-          // limit: 100
-        },
-        (response) => {
-          if (!response || response.error) {
-            // alert('Error occured')
-          }
-          else {
-            this.posts = response.data.map(p => Object.assign({}, p, {
-              form: {
-                fbcase: {id_facebook: p.id},
-                date: p.created_time,
-                title: '',
-                description: this.getDescriptions(p).join('\n'),
-                location: leaflet2geojsonPoint(this.initialLocation),
-                images: this.getPictures(p),
-                issues: {
-                  'Encontrado': false,
-                  'Perdido': false,
-                  'Traslado': false,
-                  'Tránsito': false,
-                  'Adopción': false,
-                  'Colaboración Económica': false,
-                  'Tratamiento': false
-                },
-                animal: {
-                  name: '',
-                  type: '',
-                  color: '',
-                  owner: '',
-                  race: '',
-                  size: '',
-                  sex: '',
-                  age: ''
-                }
-              }
-            }))
-            // ?fields=attachments{description,media},description,picture,place,coordinates,message,type,permalink_url
-          }
-        }
-      )
-      axios.get('/fbcases?id_group=' + n)
-        .then((response) => {
-          this.fbcases = response.data
-        })
-        .catch((e) => {
-          console.log('[1] ' + e)
-        })
     }
   }
 }
