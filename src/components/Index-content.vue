@@ -2,18 +2,46 @@
   <div class="layout-view">
     <div class="layout-padding">
 
-      <div>
-        Somos un nexo entre animales que necesitan ayuda y personas que quieren ayudarlos.
-        <hr>
-        Para participar, podes comenzar <router-link tag="a" to="/casos/">visitando la sección casos</router-link> y comunicarte para ayudar a resolver alguno de ellos. En general se necesita:
-        <ul>
-          <li>Adopción</li>
-          <li>Traslado</li>
-          <li>Tránsito</li>
-          <li>Colaboración económica</li>
-          <li>Difusión</li>
-        </ul>
+      <div class="row wrap justify-between gutter items-stretch">
+
+        <div class="md-width-1of2 bg-width-1of2 lg-width-1of3">
+          <router-link to="/casos/?issue.type=Encontrado">
+            <img src="http://placehold.it/250x150">
+          </router-link>
+        </div>
+
+        <div class="md-width-1of2 bg-width-1of2 lg-width-1of3">
+          <router-link to="/casos/?issue.type=Perdido">
+            <img src="http://placehold.it/250x150">
+          </router-link>
+        </div>
+
+        <div class="md-width-1of2 bg-width-1of2 lg-width-1of3">
+          <router-link to="/casos/?issue.type=Traslado">
+            <img src="http://placehold.it/250x150">
+          </router-link>
+        </div>
+
+        <div class="md-width-1of2 bg-width-1of2 lg-width-1of3">
+          <router-link to="/casos/?issue.type=Tránsito">
+            <img src="http://placehold.it/250x150">
+          </router-link>
+        </div>
+
+        <div class="md-width-1of2 bg-width-1of2 lg-width-1of3">
+          <router-link to="/casos/?issue.type=Adopción">
+            <img src="http://placehold.it/250x150">
+          </router-link>
+        </div>
+
+        <div class="md-width-1of2 bg-width-1of2 lg-width-1of3">
+          <router-link to="/casos/?issue.type=Colaboración Económica">
+            <img src="http://placehold.it/250x150">
+          </router-link>
+        </div>
+
       </div>
+
     </div>
   </div>
 </template>
